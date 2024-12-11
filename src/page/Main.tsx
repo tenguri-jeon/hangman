@@ -5,6 +5,7 @@ import { splitWordType, wordType } from '../module/type';
 import AlphabetItem from '../components/AlphabetItem';
 import { AlphabetsListCom, QuizCom } from './styled';
 import { useLocation } from 'react-router-dom';
+import Tooltip from '../components/Tooltip';
 
 const Main = () => {
   const location = useLocation();
@@ -17,7 +18,7 @@ const Main = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [valueArr, setValueArr] = useState<string[]>([]);
   const [leftNum, setLeftNum] = useState<number>(0);
-  const [hintNum , setHint] = useState<number>(0)
+  // const [hintNum , setHint] = useState<number>(0)
 
   // 알파벳 리스트 초기화
   const alphabet = new Array<string>(26).fill('').map((_, i) => String.fromCharCode(i + 97));
@@ -65,23 +66,24 @@ const Main = () => {
       setInputValue(value);
       onWordGame(value);
       setInputValue('');  
-    } else if (!doubleChk) {
-      alert("중복 됐습니다");
-    } else {
+    } 
+    else if(!checkEng.test(value)){
       alert("영어만 입력 가능합니다.");
     }
+    else if (!doubleChk) {
+      alert("중복 됐습니다");
+    } 
 
+    correctAnswer()
     inputRef.current?.focus();
   };
 
   // 단어 게임 로직
   const onWordGame = (value: string) => {
     if (splitword.some(item => item.spelling === value) && !valueArr.includes(value)) {
-      setValueArr((prevArr) => {
-        const newArr = [...prevArr, value];
-        return newArr;
-      });
+      valueArrDisplay(value)
       alphabetDisplay(true, value);
+      console.log(valueArr)
       const updatedSplitWords = splitword.map((item) => 
         item.spelling === value ? { ...item, isChk: true } : item
       );
@@ -94,21 +96,29 @@ const Main = () => {
           return newLeftNum;
         });
       } else {
-        onBtn();
         alert(`정답은 ${word[num].word}였습니다.`);
+        onBtn();
       }
     }
-    correctAnswer()
+    
     inputRef.current?.focus();
   };
 
   const correctAnswer = () => {
-    // valueArr가 splitword의 모든 spelling을 포함하는지 체크
-    if (splitword.every(item => valueArr.includes(item.spelling))) {
+    if (splitword.every((item)=> item.isChk === true)) {
       alert('정답입니다!');
       onBtn(); 
     }
   }
+
+  // value 상태 변경
+  const valueArrDisplay = (value: string) => {
+    setValueArr((prevArr) => {
+      return [...prevArr, value];
+    });
+  };
+  
+
 
   // 알파벳 상태 변경
   const alphabetDisplay = (type: boolean, value: string) => {
@@ -178,8 +188,10 @@ const Main = () => {
 
   useEffect(() => {
     alpahbetArr();
-  }, [num ]);
-
+  }, [num]);
+  useEffect(() => {
+    // correctAnswer();
+  }, [alphabet]);
 
 
   // 로딩 중일 때 처리
@@ -199,6 +211,8 @@ const Main = () => {
         ))}
       </QuizCom>
 
+      <Tooltip/>
+
       <AlphabetsListCom>
         {onalphabet.map((alphabets, idx) => (
           <AlphabetItem key={idx} alphabets={alphabets} />
@@ -213,11 +227,12 @@ const Main = () => {
         ref={inputRef}
         value={inputValue}  
         onChange={onChange} 
-        placeholder="단어를 입력해 주세요" 
       />
 
       <button onClick={onBtn}>다음문제</button>
       {/* <button onClick={onHint}>힌트</button> */}
+      <button onClick={correctAnswer}>정답체크</button>
+      
     </div>
   );
 };
