@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
-import GameWord from '../components/GameWord';
 import { splitWordType, wordType } from '../module/type';
+import { AlphabetsListCom, MainBtnWrap, MainCon, QuizCom } from './styled';
+import { useLocation, useNavigate } from 'react-router-dom';
+import GameWord from '../components/GameWord';
 import AlphabetItem from '../components/AlphabetItem';
-import { AlphabetsListCom, QuizCom } from './styled';
-import { useLocation } from 'react-router-dom';
 import Tooltip from '../components/Tooltip';
+import { GrLinkNext } from "react-icons/gr";
+import { FaCheck } from "react-icons/fa6";
+import { FaHome } from "react-icons/fa";
 
 const Main = () => {
   const location = useLocation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
 
   const [word, setWord] = useState<wordType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,6 +28,10 @@ const Main = () => {
   const alphabet = new Array<string>(26).fill('').map((_, i) => String.fromCharCode(i + 97));
   const [onalphabet, setAlphabet] = useState<splitWordType[]>([]);
   const getData = location.pathname.replace(/\/game\//g, '');
+  
+  const handleFocus = () => {
+    inputRef.current?.focus();
+  };
 
   // 알파벳 상태를 초기화하는 함수
   const alpahbetArr = () => {
@@ -118,8 +126,6 @@ const Main = () => {
     });
   };
   
-
-
   // 알파벳 상태 변경
   const alphabetDisplay = (type: boolean, value: string) => {
     const updatedAlphabets = onalphabet.map((alphabet) => {
@@ -189,10 +195,6 @@ const Main = () => {
   useEffect(() => {
     alpahbetArr();
   }, [num]);
-  useEffect(() => {
-    // correctAnswer();
-  }, [alphabet]);
-
 
   // 로딩 중일 때 처리
   if (loading) {
@@ -200,10 +202,8 @@ const Main = () => {
   }
 
   return (
-    <div>
-      <div>
-        {leftNum === 8 && <h2>정답: {word[num].word}</h2>}
-      </div>
+    <MainCon onClick={handleFocus}>
+      <Tooltip inputRef={inputRef}/>
 
       <QuizCom>
         {splitword.map((item) => (
@@ -211,7 +211,12 @@ const Main = () => {
         ))}
       </QuizCom>
 
-      <Tooltip/>
+      <input 
+        type="text" 
+        ref={inputRef}
+        value={inputValue}  
+        onChange={onChange} 
+      />
 
       <AlphabetsListCom>
         {onalphabet.map((alphabets, idx) => (
@@ -222,18 +227,14 @@ const Main = () => {
       <span>남은 기회 {leftNum} / 8 <br /></span>
       {/* <span>남은 힌트 기회 {hintNum} / 5 <br/></span> */}
 
-      <input 
-        type="text" 
-        ref={inputRef}
-        value={inputValue}  
-        onChange={onChange} 
-      />
-
-      <button onClick={onBtn}>다음문제</button>
-      {/* <button onClick={onHint}>힌트</button> */}
-      <button onClick={correctAnswer}>정답체크</button>
+      <MainBtnWrap>
+        <button onClick={onBtn}><GrLinkNext /> </button>
+        {/* <button onClick={onHint}>힌트</button> */}
+        <button onClick={correctAnswer}><FaCheck /> </button>
+        <button onClick={()=>{navigate('/')}}><FaHome /></button>
+      </MainBtnWrap>
       
-    </div>
+    </MainCon>
   );
 };
 

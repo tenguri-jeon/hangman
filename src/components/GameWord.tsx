@@ -1,4 +1,5 @@
 import { splitWordType } from "../module/type"
+import { GameItem } from "./styled"
 
 // rafce
 interface OwnProps {
@@ -8,9 +9,9 @@ interface OwnProps {
 const GameWord:React.FC<OwnProps> = ({word}) => {
 
   return (
-    <li style={{listStyle : 'none'}}>
+    <GameItem style={{listStyle : 'none'}}>
       {word.isChk ? word.spelling : '_'}
-    </li>
+    </GameItem>
   )
 }
 
