@@ -56,6 +56,27 @@ api로 받아온 데이터는 별다른 설정이 없어, 데이터를 받아오
 ![image](https://github.com/user-attachments/assets/23f58937-0b0c-47b4-a28b-c38071966005)
 [왼: 유추전 , 오: 유추후]
 
+
+--키보드 알파벳 또한 배열로 작성 후, boolean 과 null 속성 부여하여, 
+기존은 null ,맞는 알파벳일 경우 true , 유추한 알파벳이 틀린 경우에는 false를 부여하여 사용자가 어떤 알파벳을 유추했는지 알기 쉽게 ui로 보여준다.
+
+![image](https://github.com/user-attachments/assets/a828fdcf-928b-47fc-a7c5-9c02fd6892fa)
+[border 색이 들어 가 있는것이 null, true => 하얀배경 , false => 검은배경]
+
+    const alphabet = new Array<string>(26).fill('').map((_, i) => String.fromCharCode(i + 97));
+-- 알파벳을 일일히 치지 않고, new Array를 사용하여 한줄로 알파벳 배열 생성
+
+
+-- 다음 버튼 클릭 시
+
+  다음문제 클릭 시 다양한 이벤트 들이 발생한다.
+  1. 문제가 바껴야 하고
+  2. 알파벳의 속성은 모두 null처리 되어야 하며
+  3. 남은 기회가 0으로 변경되어야 한다.
+
+1번을 설명하기 위해서는 받아온 데이터에 대해 먼저 설명해야 한다.
+먼저 받아온 데이터를 받아, useState를 사용하여 num이라는 변수를 설정하여 준다.
+다음 문제클릭시 num의 숫자는 커지고, 다음 문제로 리셋되도록 설정 해 두었다.
    
 
 </details>
